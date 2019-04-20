@@ -27,7 +27,7 @@ Then open the cloned repository directory with VS Code and use any of the custom
 
 ## custom VS Code tasks
 
-Any docker-compose--* tasks refer to the default dockerfile [taiga-io](docker/server--taiga-io/default.docker) as well as to the [docker-compose](docker-compose/server--taiga-io/default.docker-compose) configuration if required for command execution.
+Any docker-compose--* tasks refer to the default [dockerfile](docker/server--taiga-io/default.docker) as well as to the [docker-compose](docker-compose/server--taiga-io/default.docker-compose) configuration if required for command execution.
 
 - browser--*
   - [browser--open-application-url](//github.com/talsen-team/docker-util--bash-commands/blob/master/browser--open-application-url.sh)  
