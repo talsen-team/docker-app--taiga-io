@@ -1,0 +1,140 @@
+FROM ubuntu:xenial
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV VERSION_POSTGRESQL="9.5"
+ENV VERSION_TAIGA_BACK="tags/4.0.3"
+ENV VERSION_TAIGA_FRONT="tags/4.0.3-stable"
+ENV DIRECTORY_LOGS="/dat/logs"
+ENV DIRECTORY_POSTGRESQL_DATA="/var/lib/postgresql/data"
+ENV DIRECTORY_TAIGA_MEDIA="/dat/taiga/media"
+ENV DIRECTORY_TAIGA_BACK_CONF="/dat/taiga/back/conf"
+ENV DIRECTORY_TAIGA_EVENTS_CONF="/dat/taiga/events/conf"
+ENV DIRECTORY_TAIGA_FRONT_CONF="/dat/taiga/front/conf"
+ENV DIRECTORY_NGINX_DATA="/dat/nginx/data"
+ENV DIRECTORY_NGINX_CONF="/dat/nginx/conf"
+
+RUN mkdir -p "${DIRECTORY_LOGS}"              \
+ && mkdir -p "${DIRECTORY_POSTGRESQL_DATA}"   \
+ && mkdir -p "${DIRECTORY_TAIGA_MEDIA}"       \
+ && mkdir -p "${DIRECTORY_TAIGA_BACK_CONF}"   \
+ && mkdir -p "${DIRECTORY_TAIGA_EVENTS_CONF}" \
+ && mkdir -p "${DIRECTORY_TAIGA_FRONT_CONF}"  \
+ && mkdir -p "${DIRECTORY_NGINX_CONF}"
+
+RUN apt-get update                                                                                  \
+ && apt-get dist-upgrade -y                                                                         \
+ && apt-get install -y --no-install-recommends                                                      \
+                   # docker requirements
+                   sudo netcat software-properties-common curl apt-transport-https                  \
+                   # essential packages
+                   build-essential binutils-doc autoconf flex bison libjpeg-dev                     \
+                   libfreetype6-dev zlib1g-dev libzmq3-dev libgdbm-dev libncurses5-dev              \
+                   automake libtool libffi-dev curl git tmux gettext                                \
+                   nginx                                                                            \
+                   rabbitmq-server redis-server                                                     \
+                   circus                                                                           \
+                   # taiga back postgresql dependencies
+                   postgresql-${VERSION_POSTGRESQL} postgresql-contrib-${VERSION_POSTGRESQL}        \
+                   postgresql-doc-${VERSION_POSTGRESQL} postgresql-server-dev-${VERSION_POSTGRESQL} \
+                   # python 3 dependencies
+                   python3 python3-pip python-dev python3-dev python-pip virtualenvwrapper          \
+                   libxml2-dev libxslt-dev                                                          \
+                   libssl-dev libffi-dev                                                            \
+                   # taiga front dependencies
+                   nginx                                                                            \
+                   # taiga events dependencies
+ && curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -                               \
+ && curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -                                  \
+ && apt-get update                                                                                  \
+ && apt-get install -y --no-install-recommends                                                      \
+                   nodejs
+
+RUN adduser taiga --disabled-password --gecos ""         \
+ && adduser taiga sudo                                   \
+ # prevent sudo from password promting
+ && echo "taiga ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+COPY "./rootfs/opt/server--taiga-io/postgresql-move-data-directory.sh" "/opt/server--taiga-io/postgresql-move-data-directory.sh"
+
+# fix errors when creating database for taiga
+RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales        \
+ # fix permission error for user postgres
+ && chown -R postgres:postgres "${DIRECTORY_POSTGRESQL_DATA}"
+
+USER postgres
+
+# move data directory to non version dependent path
+RUN /bin/bash /opt/server--taiga-io/postgresql-move-data-directory.sh                                \
+                "/var/lib/postgresql/${VERSION_POSTGRESQL}/main"                                     \
+                "${DIRECTORY_POSTGRESQL_DATA}"                                                       \
+# fix errors when creating database for taiga
+ && echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/${VERSION_POSTGRESQL}/main/pg_hba.conf \
+ && echo "listen_addresses='*'" >> /etc/postgresql/${VERSION_POSTGRESQL}/main/postgresql.conf
+
+USER taiga
+
+RUN cd ${HOME}                                                                 \
+ && sudo chown -R taiga:taiga "${DIRECTORY_LOGS}"                              \
+ && sudo chown -R taiga:taiga "${DIRECTORY_TAIGA_MEDIA}"                       \
+ && sudo chown -R taiga:taiga "${DIRECTORY_TAIGA_BACK_CONF}"                   \
+ && sudo chown -R taiga:taiga "${DIRECTORY_TAIGA_EVENTS_CONF}"                 \
+ && sudo chown -R taiga:taiga "${DIRECTORY_TAIGA_FRONT_CONF}"                  \
+ && ln -sf "${DIRECTORY_LOGS}" "${HOME}/logs"                                  \
+ # backend configuration
+ && cd ${HOME}                                                                 \
+ && git clone https://github.com/taigaio/taiga-back.git taiga-back             \
+ && cd taiga-back                                                              \
+ && git checkout "${VERSION_TAIGA_BACK}"                                       \
+ && ln -fs "${DIRECTORY_TAIGA_MEDIA}" "${HOME}/taiga-back/media"               \
+ && /bin/bash -c 'source /usr/share/virtualenvwrapper/virtualenvwrapper.sh     \
+ && mkvirtualenv -p /usr/bin/python3.5 taiga                                   \
+ && pip install -r requirements.txt                                            \
+ && pip install psycopg2-binary'                                               \
+ # fix psycopg2 install error
+ && cd ${HOME}                                                                 \
+ && git clone https://github.com/taigaio/taiga-front-dist.git taiga-front-dist \
+ && cd taiga-front-dist                                                        \
+ && git checkout "${VERSION_TAIGA_FRONT}"                                      \
+ && sudo rm -f /etc/nginx/sites-enabled/default                                \
+ # events configuration
+ && cd ${HOME}                                                                 \
+ && git clone https://github.com/taigaio/taiga-events.git taiga-events         \
+ && cd taiga-events                                                            \
+ && npm install                                                                \
+ && sudo npm install -g coffeescript
+
+# finalize image
+USER root
+
+COPY "./rootfs/opt/server--taiga-io/expose.sh" "/opt/server--taiga-io/expose.sh"
+
+VOLUME "${DIRECTORY_LOGS}"
+
+RUN /bin/bash /opt/server--taiga-io/expose.sh "export" \
+       "${DIRECTORY_POSTGRESQL_DATA}"
+VOLUME "${DIRECTORY_POSTGRESQL_DATA}"
+
+RUN /bin/bash /opt/server--taiga-io/expose.sh "export" \
+       "${DIRECTORY_TAIGA_MEDIA}"
+VOLUME "${DIRECTORY_TAIGA_MEDIA}"
+
+VOLUME "${DIRECTORY_TAIGA_BACK_CONF}"
+
+VOLUME "${DIRECTORY_TAIGA_EVENTS_CONF}"
+
+VOLUME "${DIRECTORY_TAIGA_FRONT_CONF}"
+
+VOLUME "${DIRECTORY_NGINX_CONF}"
+
+COPY "./rootfs/opt/server--taiga-io/entrypoint.sh"    "/opt/server--taiga-io/entrypoint.sh"
+COPY "./rootfs/opt/server--taiga-io/re-echo.sh"       "/opt/server--taiga-io/re-echo.sh"
+COPY "./rootfs/opt/server--taiga-io/wait-for-db.sh"   "/opt/server--taiga-io/wait-for-db.sh"
+COPY "./rootfs/opt/server--taiga-io/wait-for-port.sh" "/opt/server--taiga-io/wait-for-port.sh"
+COPY "./rootfs/templates"                             "/templates"
+COPY "./rootfs/etc/circus/conf.d"                     "/etc/circus/conf.d"
+
+EXPOSE 80
+
+USER taiga
+
+ENTRYPOINT [ "/bin/bash", "/opt/server--taiga-io/entrypoint.sh" ]

@@ -1,0 +1,7 @@
+{
+  "url": "amqp://taiga:${TAIGA_IO_SECRET_KEY_EVENTS}@localhost:5672/taiga",
+  "secret": "${TAIGA_IO_SECRET_KEY_API}",
+  "webSocketServer": {
+      "port": 8888
+  }
+}

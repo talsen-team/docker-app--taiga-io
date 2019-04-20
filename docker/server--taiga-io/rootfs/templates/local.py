@@ -1,0 +1,26 @@
+from .common import *
+
+MEDIA_URL = "http${TAIGA_IO_SCHEME}://${TAIGA_IO_URL}/media/"
+STATIC_URL = "http${TAIGA_IO_SCHEME}://${TAIGA_IO_URL}/static/"
+SITES["front"]["scheme"] = "http${TAIGA_IO_SCHEME}"
+SITES["front"]["domain"] = "${TAIGA_IO_URL}"
+
+SECRET_KEY = "${TAIGA_IO_SECRET_KEY_API}"
+
+DEBUG = False
+PUBLIC_REGISTER_ENABLED = False
+
+DEFAULT_FROM_EMAIL = "${TAIGA_IO_EMAIL}"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = "${TAIGA_IO_EMAIL_USE_TLS}"
+EMAIL_HOST = "${TAIGA_IO_EMAIL_HOST}"
+EMAIL_HOST_USER = "${TAIGA_IO_EMAIL_HOST_USER}"
+EMAIL_HOST_PASSWORD = "${TAIGA_IO_EMAIL_HOST_PASSWORD}"
+EMAIL_PORT = "${TAIGA_IO_EMAIL_PORT}"
+
+CELERY_ENABLED = True
+
+EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
+EVENTS_PUSH_BACKEND_OPTIONS = {"url": "amqp://taiga:${TAIGA_IO_SECRET_KEY_EVENTS}@localhost:5672/taiga"}
