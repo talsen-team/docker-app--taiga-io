@@ -138,15 +138,26 @@ function wait_for_taiga_database() {
 
 function initialize_taiga() {
   echo " * Initializing taiga ..."
-  cd ${HOME}/taiga-back                                                                                                  \
-  && /bin/bash -c 'source /usr/share/virtualenvwrapper/virtualenvwrapper.sh                                              \
-  && workon taiga                                                                                                        \
-  && python manage.py migrate --noinput                                                                                  \
-  && python manage.py loaddata initial_user                                                                              \
-  && python manage.py loaddata initial_project_templates                                                                 \
-  && python manage.py compilemessages                                                                                    \
+  cd ${HOME}/taiga-back                                                     \
+  && /bin/bash -c 'source /usr/share/virtualenvwrapper/virtualenvwrapper.sh \
+  && workon taiga                                                           \
+  && python manage.py migrate --noinput                                     \
+  && python manage.py loaddata initial_user                                 \
+  && python manage.py loaddata initial_project_templates                    \
+  && python manage.py compilemessages                                       \
   && python manage.py collectstatic --noinput'
   echo " * Initializing taiga ... done"
+}
+
+function upgrade_taiga() {
+  echo " * Upgrading taiga ..."
+  cd ${HOME}/taiga-back                                                     \
+  && /bin/bash -c 'source /usr/share/virtualenvwrapper/virtualenvwrapper.sh \
+  && workon taiga                                                           \
+  && python manage.py migrate --noinput                                     \
+  && python manage.py compilemessages                                       \
+  && python manage.py collectstatic --noinput'
+  echo " * Upgrading taiga ... done"
 }
 
 function render_taiga_backend_configuration() {
@@ -296,8 +307,24 @@ function generate() {
 }
 
 function upgrade() {
-  echo "not implemented yet ..."
-  exit 1
+  echo "Upgrading application taiga-io ..."
+  adjust_log_directory_ownership
+  adjust_taiga_media_directory_ownership
+  apply_taiga_backend_configuration
+  apply_taiga_events_configuration
+  apply_taiga_frontend_configuration
+  apply_nginx_configuration
+  start_postgresql_database
+  wait_for_taiga_database
+  start_rabbitmq
+  start_redis
+  start_circusd
+  upgrade_taiga
+  stop_circusd
+  stop_redis
+  stop_rabbitmq
+  stop_postgresql_database
+  echo "Upgrading application taiga-io ... done"
 }
 
 function start() {
