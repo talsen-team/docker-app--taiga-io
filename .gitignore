@@ -3,6 +3,8 @@
 !.vscode/
 !.vscode/tasks.json
 !bash-commands
+!bash-commands--specific/
+!bash-commands--specific/setup--generate-configuration.sh
 !bash-util
 !docker/
 !docker/server--taiga-io/
