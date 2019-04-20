@@ -1,4 +1,6 @@
 *
 
+!.vscode/
+!.vscode/tasks.json
 !.gitignore
 !LICENCE
