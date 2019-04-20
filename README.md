@@ -73,3 +73,5 @@ Any docker-compose--* tasks refer to the default [dockerfile](docker/server--tai
 - setup--*
   - [setup--generate-configuration](bash-commands--specific/setup--generate-configuration.sh)  
     Generates necessary taiga-io server configuration files.
+  - [setup--upgrade-configuration](bash-commands--specific/setup--upgrade-configuration.sh)  
+    Upgrades taiga-io server configuration files if necessary (according to [How to upgrade Taiga: Default Upgrade Process](//taigaio.github.io/taiga-doc/dist/upgrades.html#_3_4_x_4_0)).
