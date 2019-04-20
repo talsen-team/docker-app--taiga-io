@@ -2,5 +2,7 @@
 
 !.vscode/
 !.vscode/tasks.json
+!bash-util
 !.gitignore
+!.gitmodules
 !LICENCE
