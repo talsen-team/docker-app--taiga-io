@@ -1,0 +1,24 @@
+version:            '3'
+
+services:
+  server--taiga-io:
+    build:
+      context:      './../../docker/server--taiga-io'
+      dockerfile:   'default.docker'
+    command:        '${HOST_SERVICE_SERVER_TAIGA_IO_COMMAND}'
+    container_name: 'server--taiga-io'
+    env_file:
+      -             './../../container.env'
+    image:          'talsenteam/docker-taiga-io:v4.0.3'
+    ports:
+      -             '80:80'
+    restart:        'no'
+    volumes:
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/logs:/dat/logs'
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/data/db:/var/lib/postgresql/data'
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/data/media:/dat/taiga/media'
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/data/proxy:/dat/nginx/data'
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/conf/back:/dat/taiga/back/conf'
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/conf/events:/dat/taiga/events/conf'
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/conf/front:/dat/taiga/front/conf'
+      -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/conf/proxy:/dat/nginx/conf'

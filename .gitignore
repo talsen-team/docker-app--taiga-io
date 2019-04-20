@@ -27,6 +27,9 @@
 !docker/server--taiga-io/rootfs/templates/local.py
 !docker/server--taiga-io/rootfs/templates/nginx.conf
 !docker/server--taiga-io/default.docker
+!docker-compose/
+!docker-compose/server--taiga-io/
+!docker-compose/server--taiga-io/default.docker-compose
 !.gitignore
 !.gitmodules
 !LICENCE
