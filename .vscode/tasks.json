@@ -235,5 +235,19 @@
             ],
             "problemMatcher": [ ],
         },
+        {
+            "label":          "setup--upgrade-configuration",
+            "type":           "shell",
+            "command":        "/bin/bash",
+            "args":
+            [
+                              "bash-util/elevate.sh",
+                              "root",
+                              "bash-commands--specific/setup--upgrade-configuration.sh",
+                              ".",
+                              "default.docker-compose",
+            ],
+            "problemMatcher": [ ],
+        },
     ]
 }
