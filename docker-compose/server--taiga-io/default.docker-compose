@@ -12,7 +12,7 @@ services:
     image:          'talsenteam/docker-taiga-io:v4.0.3'
     ports:
       -             '80:80'
-    restart:        'no'
+    restart:        '${HOST_SERVICE_SERVER_TAIGA_IO_RESTART}'
     volumes:
       -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/logs:/dat/logs'
       -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/data/db:/var/lib/postgresql/data'
