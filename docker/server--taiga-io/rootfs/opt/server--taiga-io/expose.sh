@@ -27,8 +27,5 @@ elif [ "${VAR_OPERATION}" = "import" ]; then
     sudo mkdir -p      "${VAR_PATH_TO_EXPOSE}"
     sudo cp -Rp "/expose${VAR_PATH_TO_EXPOSE}/." \
                        "${VAR_PATH_TO_EXPOSE}/"
-    echo "   ...done."
-  else
-    echo "   ...skipped."
   fi
 fi

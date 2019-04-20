@@ -127,7 +127,6 @@ VOLUME "${DIRECTORY_TAIGA_FRONT_CONF}"
 VOLUME "${DIRECTORY_NGINX_CONF}"
 
 COPY "./rootfs/opt/server--taiga-io/entrypoint.sh"    "/opt/server--taiga-io/entrypoint.sh"
-COPY "./rootfs/opt/server--taiga-io/re-echo.sh"       "/opt/server--taiga-io/re-echo.sh"
 COPY "./rootfs/opt/server--taiga-io/wait-for-db.sh"   "/opt/server--taiga-io/wait-for-db.sh"
 COPY "./rootfs/opt/server--taiga-io/wait-for-port.sh" "/opt/server--taiga-io/wait-for-port.sh"
 COPY "./rootfs/templates"                             "/templates"
