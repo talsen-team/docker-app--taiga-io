@@ -1,5 +1,6 @@
 # docker-app: taiga-io
 
+![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/talsen-team/docker-app--taiga-io.svg?style=for-the-badge)
 [![Docker Automated build](https://img.shields.io/docker/cloud/automated/talsenteam/docker-taiga-io.svg?style=for-the-badge)](//hub.docker.com/r/talsenteam/docker-taiga-io/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/talsenteam/docker-taiga-io.svg?style=for-the-badge)](//hub.docker.com/r/talsenteam/docker-taiga-io/)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/talsenteam/docker-taiga-io.svg?style=for-the-badge)](//hub.docker.com/r/talsenteam/docker-taiga-io/)
