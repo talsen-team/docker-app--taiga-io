@@ -9,7 +9,7 @@ services:
     container_name: 'server--taiga-io'
     env_file:
       -             './../../container.env'
-    image:          'talsenteam/docker-taiga-io:v4.2.10'
+    image:          'talsenteam/docker-taiga-io:v4.2.11'
     ports:
       -             '80:80'
     restart:        '${HOST_SERVICE_SERVER_TAIGA_IO_RESTART}'
