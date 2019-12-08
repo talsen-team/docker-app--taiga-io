@@ -7,6 +7,12 @@ services:
       dockerfile:   'default.docker'
     command:        '${HOST_SERVICE_SERVER_TAIGA_IO_COMMAND}'
     container_name: 'server--taiga-io'
+    deploy:
+      resources:
+        limits:
+          memory:     '1536M'
+        reservations:
+          memory:     '512M'
     env_file:
       -             './../../container.env'
     image:          'talsenteam/docker-taiga-io:v5.0.2'
