@@ -106,6 +106,14 @@ function pull_docker_images() {
     echo -e " * Pulling docker images ... \033[0;32mdone\033[0m"
 }
 
+function run_application_upgrade() {
+    echo -E " * Running application upgrade ..."
+
+    /bin/bash bash-commands--specific/setup--upgrade-configuration.sh "." "default.docker-compose"
+
+    echo -e " * Running application upgrade ... \033[0;32mdone\033[0m"
+}
+
 echo -E "Performing upgrade ..."
 
 ensure_running_as_root
@@ -123,6 +131,8 @@ create_backup
 checkout_latest_repository_state
 
 pull_docker_images
+
+run_application_upgrade
 
 deploy_docker_services
 
