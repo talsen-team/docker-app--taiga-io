@@ -17,7 +17,7 @@ services:
       -             './../../container.env'
     image:          'talsenteam/docker-taiga-io:v5.0.6'
     ports:
-      -             '80:80'
+      -             '${HOST_SERVICE_SERVER_TAIGA_IO_HTTP_PORT}:80'
     restart:        '${HOST_SERVICE_SERVER_TAIGA_IO_RESTART}'
     volumes:
       -             '${HOST_PATH_TO_VOLUMES_ROOT}/server--taiga-io/logs:/dat/logs'
