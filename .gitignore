@@ -2,6 +2,11 @@
 
 !.vscode/
 !.vscode/tasks.json
+!bash-ci/
+!bash-ci/command-deploy.sh
+!bash-ci/command-pull-images.sh
+!bash-ci/command-purge.sh
+!bash-ci/command-upgrade.sh
 !bash-commands
 !bash-commands--specific/
 !bash-commands--specific/setup--generate-configuration.sh
