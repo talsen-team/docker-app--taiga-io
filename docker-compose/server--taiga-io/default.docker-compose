@@ -15,7 +15,7 @@ services:
           memory:     '512M'
     env_file:
       -             './../../container.env'
-    image:          'talsenteam/docker-taiga-io:v5.0.2'
+    image:          'talsenteam/docker-taiga-io:v5.0.6'
     ports:
       -             '80:80'
     restart:        '${HOST_SERVICE_SERVER_TAIGA_IO_RESTART}'
