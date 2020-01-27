@@ -4,6 +4,8 @@ set -euo pipefail
 
 echo -e "Performing deployment ..."
 
+/bin/bash bash-ci/command-pull-images.sh
+
 if [ ! -d "volumes/server--taiga-io" ] ;
 then
     /bin/bash bash-commands--specific/setup--generate-configuration.sh "." "default.docker-compose"
